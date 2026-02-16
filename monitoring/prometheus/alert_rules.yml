@@ -1,0 +1,59 @@
+# Alert Rules for LogMeIn
+groups:
+  - name: logmein_alerts
+    rules:
+      # Alert if a service has no healthy replicas
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.instance }} has been unreachable for more than 1 minute."
+
+      # Alert if node is down
+      - alert: NodeDown
+        expr: up{job="docker"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Swarm node {{ $labels.instance }} is down"
+
+      # Alert on high CPU usage
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for 5 minutes."
+
+      # Alert on high memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+
+      # Alert on disk space
+      - alert: DiskSpaceLow
+        expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk space low on {{ $labels.instance }}"
+
+      # Alert if container restarts too often
+      - alert: ContainerRestarting
+        expr: rate(container_restart_count[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting frequently"

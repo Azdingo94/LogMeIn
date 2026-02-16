@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+test-results.xml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# Vagrant
+vagrant/.vagrant/
+vagrant/worker-token.txt
+*.box
+
+# Secrets (NEVER commit these)
+.env
+.env.*
+secrets/
+*.pem
+*.key
+
+# Monitoring data
+monitoring/prometheus_data/
+monitoring/grafana_data/
+
+# Trivy reports
+trivy-*-report.txt
